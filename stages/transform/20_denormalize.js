@@ -13,14 +13,20 @@ Object.keys(data).forEach(key => {
 });
 
 function unwrap(o) {
-  console.log(o.Title);
-  if (o.Title === "20130728_183344.jpg") debugger;
+  // console.log(o.Title);
+  // if (o.Title && o.Title.indexOf("Kalkfattig helofyttsump L4-C-1") >= 0)
+  // debugger;
   if (!o.Fields) return {};
   const r = {};
   o.Fields.forEach(field => {
-    const fm = unwrapField(field);
+    var fm = unwrapField(field);
+    if (typeof fm === "string") fm = { value: fm };
+
     Object.keys(fm).forEach(key => (r[key] = fm[key]));
   });
+  if (Object.keys(r).length === 2 && r.tag && r.value) {
+    return { [r.tag]: r.value };
+  }
   //  delete o.Fields;
   //  Object.keys(r).forEach(key => (o[key] = r[key]));
   return r;
@@ -67,11 +73,12 @@ function unwrapField(f) {
     case "license":
       return { licence: decodeReferences(f.References) };
     case "filereference":
-      return decodeReferences(f.References);
+      return { filereference: decodeReferences(f.References) };
     case "collection":
       return { collection: decodeReferences(f.References) };
     case "reference":
-      return { reference: decodeReferences(f.References) };
+      return { reference: f.References };
+    // TODO:      return { reference: decodeReferences(f.References) };
     case "tuple":
       return decodeReferences(f.References);
     case "metadata":
@@ -107,11 +114,17 @@ function unwrapField(f) {
 
 function decodeReference(ref) {
   const node = data[ref];
+  //  if (node)
+  //  if (node.Type !== "media" && node.Type !== "image" && ref.indexOf("/F" < 0))
+  //  return ref;
   if (!node) {
     log.warn("Mangler node " + ref);
     return { missingNode: ref };
   }
   switch (node.Type) {
+    case "document":
+    case "media":
+      return ref;
     case "image":
       return ref;
     case "description":
@@ -120,6 +133,10 @@ function decodeReference(ref) {
     case "resource":
     case "term":
       return node.Title;
+    case "tuple":
+      return ref;
+    default:
+      break;
   }
   //  if (node.Type === "resource") debugger;
   const e = {
