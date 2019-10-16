@@ -8,14 +8,9 @@ Object.keys(data).forEach(key => {
   const e = data[key];
   const r = unwrap(e);
   out[key] = r;
-  //  Object.keys(r).forEach(key => (e[key] = r[key]));
-  //if (e.Fields)
 });
 
 function unwrap(o) {
-  // console.log(o.Title);
-  // if (o.Title && o.Title.indexOf("Kalkfattig helofyttsump L4-C-1") >= 0)
-  // debugger;
   if (!o.Fields) return {};
   const r = {};
   o.Fields.forEach(field => {
@@ -30,7 +25,7 @@ function unwrap(o) {
   if (Object.keys(r).length === 1 && r.tag) {
     return { [r.tag]: o.Title };
   }
-  //  if (o.Title) r.title = o.Title;
+  if (o.Title) r.title = o.Title;
   return r;
 }
 
@@ -115,9 +110,6 @@ function unwrapField(f) {
 
 function decodeReference(ref) {
   const node = data[ref];
-  //  if (node)
-  //  if (node.Type !== "media" && node.Type !== "image" && ref.indexOf("/F" < 0))
-  //  return ref;
   if (!node) {
     log.warn("Mangler node " + ref);
     return { missingNode: ref };
@@ -139,12 +131,10 @@ function decodeReference(ref) {
     default:
       break;
   }
-  //  if (node.Type === "resource") debugger;
   const e = {
     title: node.Title,
     ...unwrap(node)
   };
-  //    url: ref.replace("Nodes", "https://artsdatabanken.no/Media")
 
   if (e.tag === "Taxon" && e.literal) {
     return "AR-" + e.literal["Scientific Name ID"];

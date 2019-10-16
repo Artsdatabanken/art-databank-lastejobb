@@ -30,7 +30,6 @@ function dereference(src) {
         src.reference = refnode;
       default:
         src.reference = refnode;
-      //        debugger;
     }
   });
   delete src.reference;
