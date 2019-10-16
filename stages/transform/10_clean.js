@@ -2,24 +2,13 @@ const { io } = require("lastejobb");
 
 let data = io.lesDatafil("databank").Results;
 
-ignoreKeys = [
-  "Created",
-  "Published",
-  "Changed",
-  "Raven-Entity-Name",
-  "Raven-Clr-Type",
-  "Temp-Index-Score",
-  "Last-Modified",
-  "Raven-Last-Modified",
-  "@etag",
-  "SerializedSizeOnDisk"
-];
+ignoreKeys = ["Created", "Published"];
 //@metadata @id
 const ignoredKeys = {};
-//ignoreKeys.forEach(key => (ignoredKeys[key] = 1));
+ignoreKeys.forEach(key => (ignoredKeys[key] = 1));
 
 clean(data);
-//data = arrayToObject(data);
+data = arrayToObject(data);
 
 function arrayToObject(data) {
   const r = {};
