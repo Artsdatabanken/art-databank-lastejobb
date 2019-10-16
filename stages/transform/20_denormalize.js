@@ -4,7 +4,7 @@ let data = io.lesDatafil("10_clean");
 let out = {};
 
 Object.keys(data).forEach(key => {
-  //  if (key !== "Nodes/180935") return;
+  // if (key !== "Nodes/194453") return;
   const e = data[key];
   const r = unwrap(e);
   out[key] = r;
@@ -27,10 +27,11 @@ function unwrap(o) {
   if (Object.keys(r).length === 2 && r.tag && r.value) {
     return { [r.tag]: r.value };
   }
-  //  delete o.Fields;
-  //  Object.keys(r).forEach(key => (o[key] = r[key]));
+  if (Object.keys(r).length === 1 && r.tag) {
+    return { [r.tag]: o.Title };
+  }
+  //  if (o.Title) r.title = o.Title;
   return r;
-  //}
 }
 
 function unwrapField(f) {
