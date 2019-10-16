@@ -1,8 +1,8 @@
-const { io, http } = require("lastejobb");
+const { io } = require("lastejobb");
 
 let data = io.lesDatafil("30_arter");
 
-const images = [];
+const images = {};
 
 Object.keys(data).forEach(key => {
   //  if (key !== "Nodes/180935") return;
@@ -12,14 +12,7 @@ Object.keys(data).forEach(key => {
   if (!ref) return;
   const url = ref.replace("Nodes", "https://artsdatabanken.no/Media");
   const kode = taxon.kode;
-  images.push({ kode, url });
+  images[kode] = url;
 });
 
-for (var i = 0; i < 3; i++) downloadNext();
-
-async function downloadNext() {
-  if (images.length <= 0) return;
-  const { url, kode } = images.pop();
-  await http.downloadBinary(url, "build/" + kode + ".jpg");
-  downloadNext();
-}
+io.skrivBuildfil("coverphoto", images);
