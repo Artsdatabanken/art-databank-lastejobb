@@ -1,4 +1,5 @@
-const { io, json, log, text } = require("lastejobb");
+const { io, json, text } = require("lastejobb");
+const databank2egenskap = require("./databank2egenskap");
 
 let data = io.lesDatafil("30_arter");
 let taxonSrc = io.lesDatafil("30_arter_taxon");
@@ -77,104 +78,8 @@ function mapArtikkel(taxon, content) {
       return;
     }
 
-    const map = {
-      "Utbredelse i Midt-Norge": "utbredelse.midt-norge",
-      "Utbredelse i Midt-Norge": "utbredelse.midt-norge",
-      Anatomi: "morfologi.anatomi",
-      "Antall og utbredelse": "utbredelse.norge",
-      Dialektnavn: "tittel.dialekt",
-      Taksonomi: "systematikk.taksonomi",
-      Inndeling: "systematikk.inndeling",
-      Underarter: "systematikk.underart.beskrivelse",
-      "Karakteristiske og vanlige arter i Norge":
-        "systematikk.underart.karakteristisk",
-      Artsbestemmelse: "systematikk.artsbestemmelse",
-      Forveksling: "systematikk.forveksling.beskrivelse",
-      Hybridisering: "reproduksjon.hybridisering",
-      Utseende: "morfologi.utseende",
-      Kommentar: "kommentar",
-      Kommentarer: "kommentar",
-      Formering: "reproduksjon.beskrivelse",
-      Sporefarge: "morfologi.sporefarge",
-      "Egg og larve": "reproduksjon.egg",
-      Kjennetegn: "morfologi.kjennetegn",
-      Klassekjennetegn: "morfologi.kjennetegn",
-      Skall: "morfologi.kroppsdel.skall",
-      Kropp: "morfologi.kroppsdel.kropp",
-      "Næring/byttedyr": "diett.tekst",
-      Nøkkelkarakterer: "morfologi.kjennetegn",
-      Livssyklus: "reproduksjon.livssyklus",
-      Antall: "systematikk.antall",
-      "Flygetid og livslengde": "reproduksjon.flyvetid",
-      Flygetid: "reproduksjon.flyvetid",
-      Flyvetid: "reproduksjon.flyvetid",
-      Reproduksjon: "reproduksjon.beskrivelse",
-      "Fiender, sykdommer, parasitter": "sykdom",
-      "Fiender, parasitter, sykdommer": "sykdom",
-      "Fiender, parasitter og sykdommer": "sykdom",
-      "Fiender og sykdommer": "sykdom",
-      "Parasitter og predatorer": "predator",
-      Vingespenn: "morfologi.vingespenn",
-      "Unge stadier": "morfologi.unge_stadier",
-      "Forekomster nær Norge": "utbredelse.nær_norge",
-      "Utbredelse i Norge og Norden": "utbredelse.nær_norge",
-      "Utbredelse i verden forøvrig": "utbredelse.globalt",
-      "Utbredelse i verden for øvrig": "utbredelse.globalt",
-      Kroppsbygning: "morfologi.kroppsbygning",
-      Beskrivelse: "morfologi.beskrivelse",
-      "Ytre bygning": "morfologi.ytre_bygning",
-      "Mikroskopiske kjennetegn": "morfologi.kjennetegn.mikroskopisk",
-      Størrelse: "morfologi.størrelse",
-      "Beskrivelse, kjennetegn": "morfologi.kjennetegn.beskrivelse",
-      Kromosomtall: "morfologi.kromosomtall",
-      "Morfologisk variasjon": "morfologi.variasjon",
-      "Økologi og livssyklus": "utbredelse.økologi_livssyklus",
-      "Økologi og Utbredelse": "utbredelse.økologi_utbredelse",
-      Økologi: "økologi",
-      "Farger og mimikry": "morfologi.farge",
-      Klekking: "morfologi.klekking",
-      Larve: "morfologi.larve",
-      Samarbeidspartnere: "samarbeidspartnere",
-      Sang: "sang",
-      Kjemi: "morfologi.kjemi",
-      Livsutvikling: "reproduksjon.livssyklus",
-      Morfologi: "morfologi.beskrivelse",
-      Forekomststatus: "utbredelse.forekomststatus",
-      Habitat: "habitat.levesett",
-      "Habitat og utbredelse": "habitat.levesett",
-      "Habitatvalg og blomsterpreferanse": "habitat.levesett",
-      Bestandsstatus: "utbredelse.forekomststatus",
-      Tannformler: "morfologi.tannformel",
-      Giftig: "morfologi.gift",
-      "Indre organer": "fysiologi.indre organer",
-      Silke: "fysiologi.silke",
-      Vepsegift: "morfologi.gift",
-      "Innsamling og bestemmelse": "systematikk.artsbestemmelse",
-      "Arter i Norden": "systematikk.geografi.norden",
-      Levesett: "habitat.levesett",
-      Levevis: "habitat.levesett",
-      Ordenskjennetegn: "morfologi.kjennetegn",
-      Referanser: "referanse",
-      Biologi: "habitat.biologi",
-      "Levested og økologi": "habitat.levested",
-      "Struktur og oppbygning": "morfologi.struktur_oppbygging",
-      Systematikk: "systematikk",
-      "Systematikk og navngivning": "systematikk.navngivning",
-      "Artsbestemmelse, litteratur og nettsteder":
-        "systematikk.videre_bestemmelse",
-      "Videre bestemmelse": "systematikk.videre_bestemmelse",
-      "Tradisjonell bruk": "tradisjonell_bruk",
-      "Global utbredelse": "utbredelse.global",
-      Totalutbredelse: "utbredelse.global",
-      "Norsk utbredelse": "utbredelse.norge",
-      "Utbredelse i Norge": "utbredelse.norge",
-      Utbredelse: "utbredelse.beskrivelse",
-      "Spredning og forekomst": "utbredelse.beskrivelse",
-      Voksested: "habitat.voksested"
-    };
-
-    for (var heading of Object.keys(map))
-      if (moveTo(property, heading, taxon, map[heading])) return;
+    for (var heading of Object.keys(databank2egenskap))
+      if (moveTo(property, heading, taxon, databank2egenskap[heading])) return;
 
     nomatch.push(property);
   });
@@ -190,7 +95,6 @@ function moveTo(subnode, heading, o, destKey) {
   const src = subnode;
   const value = src.body;
   const path = destKey.split(".");
-  path.push("nob"); // TODO andre språk
   while (path.length > 1) {
     const seg = path.shift();
     if (!o[seg]) o[seg] = {};
