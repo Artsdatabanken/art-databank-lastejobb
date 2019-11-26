@@ -94,7 +94,7 @@ function moveTo(subnode, heading, o, destKey) {
   if (snh !== heading) return false;
   //  if (snh === "utbredelse i midt-norge") debugger;
   const src = subnode;
-  const value = src.body;
+  let value = src.body;
   const path = destKey.split(".");
   while (path.length > 1) {
     const seg = path.shift();
