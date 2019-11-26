@@ -25,7 +25,12 @@ function clean(o) {
   if (typeof o === "string") return;
   Object.keys(o).forEach(key => {
     const value = o[key];
-    if (value === "" || value === null || ignoredKeys[key]) {
+    if (
+      //      key !== "Nodes/104311" ||
+      value === "" ||
+      value === null ||
+      ignoredKeys[key]
+    ) {
       delete o[key];
       return;
     }

@@ -9,14 +9,13 @@ const out = [];
 const allkeys = {};
 
 Object.keys(data).forEach(key => {
-  const taxon = data[key];
-  //if (taxon.kode !== "AR-104") return;
-  decodeStrings(taxon);
+  let taxon = data[key];
+  // if (taxon.kode === "AR-104311") debugger;
+  if (taxon.kode === "AR-104309") debugger;
   delete taxon.collection;
-  json.moveKey(taxon, "intro", "beskrivelse.nob");
+  json.moveKey(taxon, "intro", "beskrivelse");
   taxon.artikkel = mapArtikkel(taxon, taxon.descriptioncontent);
-  if (taxon.beskrivelse && taxon.beskrivelse.nob)
-    taxon.beskrivelse.nob = text.decode(taxon.beskrivelse.nob);
+  taxon = textDecode(taxon);
   delete taxon.heading;
   delete taxon.descriptioncontent;
   delete taxon.tag;
@@ -25,8 +24,18 @@ Object.keys(data).forEach(key => {
   delete taxon.licence;
   delete taxon.value;
   delete taxon.metadata; // TODO
-  out.push(taxon);
+  out[taxon.kode] = json.mergeDeep(out[taxon.kode] || {}, taxon);
 });
+
+function textDecode(o) {
+  if (typeof o === "string") return text.decode(o);
+  if (Array.isArray(o)) return o.map(item => textDecode(item));
+  return Object.keys(o || {}).reduce((acc, key) => {
+    //    if (key === "blomstringstid") debugger;
+    acc[key] = textDecode(o[key]);
+    return acc;
+  }, {});
+}
 
 function mapArtikkel(taxon, content) {
   if (!Array.isArray(content)) content = [content];
@@ -41,7 +50,8 @@ function mapArtikkel(taxon, content) {
     decodeStrings(property);
     composePropertyContent(property);
     if (property.title.toLowerCase().indexOf("blomstringstid") >= 0) {
-      taxon.blomstringstid = property.body
+      if (!property.body.nob) debugger;
+      taxon.blomstringstid = property.body.nob
         .toLowerCase()
         .replace(".", "")
         .split("–");
@@ -54,12 +64,14 @@ function mapArtikkel(taxon, content) {
       if (fv.length > 0) taxon.diett.art = fv;
       return;
     }
+    const head =
+      property.heading && (property.heading.nob || property.heading.und);
     if (
-      property.heading === "Forvekslingsarter" ||
-      property.heading === "Forvekslingarter" ||
-      property.heading === "Forvekslingssrter" ||
-      property.heading === "Forvekslingsarter (på svalbard)" ||
-      property.heading === "Forvekslingsarter (på fastlandet)"
+      head === "Forvekslingsarter" ||
+      head === "Forvekslingarter" ||
+      head === "Forvekslingssrter" ||
+      head === "Forvekslingsarter (på svalbard)" ||
+      head === "Forvekslingsarter (på fastlandet)"
     ) {
       const fv = referertArtTilKode(property.reference);
       if (fv.length > 0) {
@@ -70,7 +82,7 @@ function mapArtikkel(taxon, content) {
       return;
     }
 
-    if (property.heading === "Vertsforhold") {
+    if (head === "Vertsforhold") {
       const fv = referertArtTilKode(property.reference);
       if (fv.length > 0) {
         taxon.vert = taxon.vert || {};
@@ -90,11 +102,10 @@ function mapArtikkel(taxon, content) {
 function moveTo(subnode, heading, o, destKey) {
   if (!subnode.heading) return true;
   heading = heading.toLowerCase();
-  const snh = subnode.heading.toLowerCase();
+  const snh = (subnode.heading.nob || "").toLowerCase();
   if (snh !== heading) return false;
   //  if (snh === "utbredelse i midt-norge") debugger;
-  const src = subnode;
-  let value = src.body;
+  let value = subnode.body;
   const path = destKey.split(".");
   while (path.length > 1) {
     const seg = path.shift();
@@ -155,6 +166,6 @@ function referertArtTilKode(refs) {
   return r;
 }
 
-io.skrivBuildfil("type", out);
+io.skrivBuildfil("type", json.objectToArray(out));
 io.skrivDatafil("40_allkeys", allkeys);
 io.skrivDatafil("40_nomatch", nomatch);

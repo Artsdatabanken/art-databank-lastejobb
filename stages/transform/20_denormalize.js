@@ -4,9 +4,15 @@ let data = io.lesDatafil("10_clean");
 let out = {};
 
 Object.keys(data).forEach(key => {
-  if (key === "Nodes/195319") debugger;
+  //  if (key === "Nodes/195319") debugger;
+  //  if (key !== "Nodes/104311") return;
   const e = data[key];
   const r = unwrap(e);
+  const x = e;
+  if (r[0]) {
+    debugger;
+    console.log(x);
+  }
   out[key] = r;
 });
 
@@ -15,6 +21,7 @@ function unwrap(o) {
   const r = {};
   o.Fields.forEach(field => {
     var fm = unwrapField(field);
+    if (!fm) return;
     if (typeof fm === "string") fm = { value: fm };
 
     Object.keys(fm).forEach(key => (r[key] = fm[key]));
@@ -25,6 +32,7 @@ function unwrap(o) {
   if (Object.keys(r).length === 1 && r.tag) {
     return { [r.tag]: o.Title };
   }
+  debugger;
   if (o.Title) r.title = o.Title;
   return r;
 }
@@ -32,34 +40,34 @@ function unwrap(o) {
 function unwrapField(f) {
   switch (f.Name) {
     case "fileuri":
-      return { fileuri: decodeValues(f.Values) };
+      return { fileuri: decodeField(f) };
     case "mime":
-      return { mime: decodeValues(f.Values) };
+      return { mime: decodeField(f) };
     case "intro":
-      return { intro: decodeValues(f.Values) };
+      return { intro: decodeField(f) };
     case "annotation":
-      return { annotation: decodeValues(f.Values) };
+      return { annotation: decodeField(f) };
     case "label":
-      return { label: decodeValues(f.Values) };
+      return { label: decodeField(f) };
     case "lead":
-      return { lead: decodeValues(f.Values) };
+      return { lead: decodeField(f) };
     case "value":
-      return decodeValues(f.Values);
+      return decodeField(f);
     case "cite":
-      return { cite: decodeValues(f.Values) };
+      return { cite: decodeField(f) };
     case "body":
-      return { body: decodeValues(f.Values) };
+      return { body: decodeField(f) };
     case "group":
     case "groups":
-      const v = decodeValues(f.Values);
+      const v = decodeField(f);
       if (v === null || v === "default") return {};
       return { groups: v };
     case "svg":
-      return { svg: decodeValues(f.Values) };
+      return { svg: decodeField(f) };
     case "heading":
-      return { heading: decodeValues(f.Values) };
+      return { heading: decodeField(f) };
     case "headline":
-      return { headline: decodeValues(f.Values) };
+      return { headline: decodeField(f) };
     case "literal":
       return { literal: decodeLiteral(f.Fields) };
     case "record":
@@ -76,7 +84,8 @@ function unwrapField(f) {
       return { reference: f.References };
     // TODO:      return { reference: decodeReferences(f.References) };
     case "tuple":
-      return decodeReferences(f.References);
+      return null; // Graphics and irrelevant stuff?
+    //      return { tuple: decodeReferences(f.References) };
     case "metadata":
       return { metadata: unwrap(f) };
     case "descriptioncontent":
@@ -152,9 +161,30 @@ function decodeReferences(references) {
   return decodeValues(values);
 }
 
+function decodeField(field) {
+  const values = field.Values;
+  const v = values.length === 1 ? values[0] : values;
+  const lang = field.Language;
+  if (!lang) return v;
+  return { [iso2To3Lang(lang)]: v };
+}
+
 function decodeValues(values) {
-  if (values.length === 1) return values[0];
-  return values;
+  const v = values.length === 1 ? values[0] : values;
+  return v;
+}
+
+function iso2To3Lang(iso2) {
+  switch (iso2) {
+    case "en":
+      return "eng";
+    case "nb":
+    case "und":
+      return "nob";
+    default:
+      log.warn("Ukjent språk: " + iso2);
+      return iso2;
+  }
 }
 
 function decodeLiteral(fields) {
