@@ -73,7 +73,8 @@ function mapArtikkel(taxon, content) {
     if (property.heading === "Vertsforhold") {
       const fv = referertArtTilKode(property.reference);
       if (fv.length > 0) {
-        taxon.vert = fv;
+        taxon.vert = taxon.vert || {};
+        taxon.vert.art = fv;
       }
       return;
     }

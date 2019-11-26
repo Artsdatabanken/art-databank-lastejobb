@@ -1,3 +1,3 @@
 set - e;
 
-cp data/build/*.jpg ../bilder/bilde-lastejobb/bilde-lastejobb/data/foto/
+cp temp/build/*.jpg ../bilder/bilde-lastejobb/bilde-lastejobb/temp/foto/
