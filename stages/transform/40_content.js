@@ -11,11 +11,12 @@ const allkeys = {};
 Object.keys(data).forEach(key => {
   let taxon = data[key];
   // if (taxon.kode === "AR-104311") debugger;
-  if (taxon.kode === "AR-104309") debugger;
   delete taxon.collection;
   json.moveKey(taxon, "intro", "beskrivelse");
   taxon.artikkel = mapArtikkel(taxon, taxon.descriptioncontent);
   taxon = textDecode(taxon);
+  //  if (taxon.tittel && taxon.tittel.dialekt) debugger;
+  json.moveKey(taxon, "tittel.dialekt.nob", "tittel.dia");
   delete taxon.heading;
   delete taxon.descriptioncontent;
   delete taxon.tag;
