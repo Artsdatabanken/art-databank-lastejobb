@@ -1,6 +1,6 @@
 {
   "name": "art-databank-lastejobb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "lastejobb": "^2.17.8"
+    "lastejobb": "^2.18.1"
   }
 }
