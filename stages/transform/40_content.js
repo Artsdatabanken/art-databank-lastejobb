@@ -10,12 +10,15 @@ const allkeys = {};
 
 Object.keys(data).forEach(key => {
   let taxon = data[key];
+  const nodeid = key.split("/").pop();
   // if (taxon.kode === "AR-104311") debugger;
   delete taxon.collection;
   json.moveKey(taxon, "intro", "beskrivelse");
   taxon.artikkel = mapArtikkel(taxon, taxon.descriptioncontent);
   taxon = textDecode(taxon);
+  taxon.url = "https://artsdatabanken.no/Pages/" + nodeid;
   //  if (taxon.tittel && taxon.tittel.dialekt) debugger;
+  json.moveKey(taxon, "title", "tittel.sci");
   json.moveKey(taxon, "tittel.dialekt.nob", "tittel.dia");
   delete taxon.heading;
   delete taxon.descriptioncontent;
