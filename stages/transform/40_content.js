@@ -1,8 +1,8 @@
 const { io, json, text } = require("lastejobb");
 const databank2egenskap = require("./databank2egenskap");
 
-let data = io.lesDatafil("30_arter");
-let taxonSrc = io.lesDatafil("30_arter_taxon");
+let data = io.lesTempJson("30_arter");
+let taxonSrc = io.lesTempJson("30_arter_taxon");
 let nomatch = [];
 
 const out = [];

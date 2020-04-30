@@ -1,6 +1,6 @@
 const { io } = require("lastejobb");
 
-let data = io.lesDatafil("30_arter");
+let data = io.lesTempJson("30_arter");
 
 const images = {};
 

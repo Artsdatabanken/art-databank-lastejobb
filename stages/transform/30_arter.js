@@ -1,6 +1,6 @@
 const { io, log } = require("lastejobb");
 
-let data = io.lesDatafil("20_denormalize");
+let data = io.lesTempJson("20_denormalize");
 let taxonDescription = {};
 let taxon = {};
 

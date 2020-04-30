@@ -1,6 +1,6 @@
 const { io } = require("lastejobb");
 
-let data = io.lesDatafil("databank").Results;
+let data = io.lesTempJson("databank").Results;
 
 ignoreKeys = ["Created", "Published"];
 //@metadata @id

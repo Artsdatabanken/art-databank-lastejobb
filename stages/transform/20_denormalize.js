@@ -1,6 +1,6 @@
 const { io, log } = require("lastejobb");
 
-let data = io.lesDatafil("10_clean");
+let data = io.lesTempJson("10_clean");
 let out = {};
 
 Object.keys(data).forEach(key => {
@@ -10,7 +10,7 @@ Object.keys(data).forEach(key => {
   const r = unwrap(e);
   const x = e;
   if (r[0]) {
-    debugger;
+    //    debugger;
     console.log(x);
   }
   out[key] = r;
@@ -32,7 +32,6 @@ function unwrap(o) {
   if (Object.keys(r).length === 1 && r.tag) {
     return { [r.tag]: o.Title };
   }
-  debugger;
   if (o.Title) r.title = o.Title;
   return r;
 }

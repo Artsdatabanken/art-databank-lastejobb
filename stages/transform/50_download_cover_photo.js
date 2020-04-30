@@ -1,7 +1,7 @@
 const { image, io, http } = require("lastejobb");
 const fs = require("fs");
 
-let images = io.lesBuildfil("coverphoto").items;
+let images = io.readJson("build/coverphoto.json").items;
 
 for (var i = 0; i < 3; i++) downloadNext();
 
