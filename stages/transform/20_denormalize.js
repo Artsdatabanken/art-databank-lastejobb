@@ -180,6 +180,8 @@ function iso2To3Lang(iso2) {
     case "nb":
     case "und":
       return "nob";
+    case "nn":
+      return "nno";
     default:
       log.warn("Ukjent språk: " + iso2);
       return iso2;
